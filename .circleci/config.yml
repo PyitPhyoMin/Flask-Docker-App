@@ -1,0 +1,28 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@2.1
+  docker: circleci/docker@2.1.1
+
+jobs:
+  build-and-push:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - setup_remote_docker
+      - python/install-packages:
+          pkg-manager: pip
+          packages:
+            - -r requirements.txt
+      - run: |
+          echo "Building Docker image..."
+          docker build -t $DOCKERHUB_USERNAME/flaskdockerapp .
+      - run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker push $DOCKERHUB_USERNAME/flaskdockerapp
+
+workflows:
+  simple_workflow:
+    jobs:
+      - build-and-push
