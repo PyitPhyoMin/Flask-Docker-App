@@ -11,8 +11,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - python/install-requirements:
-          requirements-file: requirements.txt
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: requirements.txt
       - run: |
           echo "Building Docker image..."
           docker build -t $DOCKERHUB_USERNAME/flaskdockerapp .
